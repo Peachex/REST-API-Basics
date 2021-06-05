@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -8,7 +9,7 @@ public class GiftCertificate {
     private long id;
     private String name;
     private String description;
-    private double price;
+    private BigDecimal price;
     private int duration;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
@@ -18,7 +19,7 @@ public class GiftCertificate {
 
     }
 
-    public GiftCertificate(String name, String description, double price, int duration, LocalDateTime createDate,
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate,
                            LocalDateTime lastUpdateDate, List<Tag> tags) {
         this.name = name;
         this.description = description;
@@ -29,7 +30,7 @@ public class GiftCertificate {
         this.tags = tags;
     }
 
-    public GiftCertificate(long id, String name, String description, double price, int duration,
+    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration,
                            LocalDateTime createDate, LocalDateTime lastUpdateDate, List<Tag> tags) {
         this(name, description, price, duration, createDate, lastUpdateDate, tags);
         this.id = id;
@@ -55,11 +56,11 @@ public class GiftCertificate {
         this.description = description;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -104,9 +105,10 @@ public class GiftCertificate {
             return false;
         }
         GiftCertificate that = (GiftCertificate) o;
-        return (id == that.id && Double.compare(that.price, price) == 0 && duration == that.duration &&
-                name.equals(that.name) && description.equals(that.description) && createDate.equals(that.createDate) &&
-                Objects.equals(lastUpdateDate, that.lastUpdateDate) && tags.equals(that.tags));
+        return (id == that.id && duration == that.duration && name.equals(that.name) &&
+                description.equals(that.description) && price.equals(that.price) &&
+                createDate.equals(that.createDate) && Objects.equals(lastUpdateDate, that.lastUpdateDate) &&
+                tags.equals(that.tags));
     }
 
     @Override
