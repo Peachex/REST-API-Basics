@@ -9,4 +9,5 @@
 
 rootProject.name = 'springapp'
 include 'repository'
+include 'service'
 
