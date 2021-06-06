@@ -1,0 +1,31 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'war'
+}
+
+group 'com.epam.ems'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation group: 'org.springframework', name: 'spring-web', version: '5.3.3'
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.3'
+    implementation group: 'org.springframework', name: 'spring-context', version: '5.3.3'
+    implementation group: 'org.springframework', name: 'spring-core', version: '5.3.3'
+    implementation group: 'org.springframework', name: 'spring-beans', version: '5.3.3'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.3'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.12.3'
+    implementation project(':repository')
+    implementation project(':service')
+}
+
+test {
+    useJUnitPlatform()
+}

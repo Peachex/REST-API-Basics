@@ -8,6 +8,6 @@
  */
 
 rootProject.name = 'springapp'
-include 'repository'
+include 'web'
 include 'service'
-
+include 'repository'
