@@ -4,7 +4,6 @@ import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Tag;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
