@@ -49,7 +49,6 @@ public class Tag {
 
     @Override
     public String toString() {
-        return ("id = " + id +
-                "\nname = " + name);
+        return name;
     }
 }

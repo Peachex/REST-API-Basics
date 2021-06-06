@@ -125,6 +125,6 @@ public class GiftCertificate {
                 "\nduration = " + duration +
                 "\ncreateDate = " + createDate +
                 "\nlastUpdateDate = " + lastUpdateDate +
-                "\ntags = " + tags);
+                "\ntags = " + tags + "\n");
     }
 }
