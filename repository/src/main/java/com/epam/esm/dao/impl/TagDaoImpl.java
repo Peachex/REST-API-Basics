@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class TagDaoImpl implements TagDao<Tag> {
@@ -28,8 +27,10 @@ public class TagDaoImpl implements TagDao<Tag> {
     }
 
     @Override
-    public Optional<Tag> findById(long id) {
-        return template.query(SqlTagQuery.SQL_SELECT_TAG_BY_ID, mapper, new Object[]{id}).stream().findAny();
+    public Tag findById(long id) {
+        return template.query(SqlTagQuery.SQL_SELECT_TAG_BY_ID, mapper, new Object[]{id}).stream()
+                .findAny()
+                .orElseThrow(() -> new RuntimeException("Requested resource not found (id = " + id + ")"));
     }
 
     @Override

@@ -12,7 +12,7 @@ import static com.epam.esm.validator.TagValidator.areRequestParamsValid;
 
 @Component
 public class TagFactory implements EntityFactory<Optional<Tag>> {
-    @Override
+    @Override // TODO: 6/10/2021 delete tagFactory
     public Optional<Tag> create(MultiValueMap<String, String> requestParams) {
         return (areRequestParamsValid(requestParams) ?
                 Optional.of(new Tag(requestParams.get(SqlTagColumnName.TAG_NAME).get(0))) : Optional.empty());
