@@ -11,6 +11,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class ExceptionsHandler {
     @ExceptionHandler(RuntimeException.class)
     public final ResponseEntity<ErrorResponse> handleRuntimeExceptions(RuntimeException e) {
-        return new ResponseEntity<>(new ErrorResponse(e.getLocalizedMessage(), NOT_FOUND + "11"), NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse(e.getLocalizedMessage(), NOT_FOUND.value() + "11"), NOT_FOUND);
     }
 }
