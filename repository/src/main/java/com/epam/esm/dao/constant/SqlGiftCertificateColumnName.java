@@ -8,4 +8,7 @@ public class SqlGiftCertificateColumnName {
     public static final String DURATION = "duration";
     public static final String CREATE_DATE = "create_date";
     public static final String LAST_UPDATE_DATE = "last_update_date";
+
+    private SqlGiftCertificateColumnName() {
+    }
 }
