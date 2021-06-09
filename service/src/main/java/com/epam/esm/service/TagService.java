@@ -6,7 +6,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.List;
 
 public interface TagService<T extends Tag> {
-    boolean insert(MultiValueMap<String, String> requestParams);
+    boolean insert(Tag tag);
 
     T findById(String id);
 

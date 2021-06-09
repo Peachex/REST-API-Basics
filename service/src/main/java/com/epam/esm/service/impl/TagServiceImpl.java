@@ -2,30 +2,26 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.Tag;
-import com.epam.esm.factory.EntityFactory;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 
 import java.util.List;
-import java.util.Optional;
+
+import static com.epam.esm.validator.TagValidator.isNameValid;
 
 @Service
 public class TagServiceImpl implements TagService<Tag> {
     private final TagDao<Tag> dao;
-    private final EntityFactory<Optional<Tag>> factory;
 
     @Autowired
-    public TagServiceImpl(TagDao<Tag> dao, EntityFactory<Optional<Tag>> factory) {
+    public TagServiceImpl(TagDao<Tag> dao) {
         this.dao = dao;
-        this.factory = factory;
     }
 
     @Override
-    public boolean insert(MultiValueMap<String, String> requestParams) {
-        Optional<Tag> tag = factory.create(requestParams);
-        return (tag.isPresent() && dao.insert(tag.get()) == 1);
+    public boolean insert(Tag tag) {
+        return (isNameValid(tag.getName()) && dao.insert(tag) == 1);
     }
 
     @Override
