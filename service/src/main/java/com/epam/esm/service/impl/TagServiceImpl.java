@@ -29,14 +29,12 @@ public class TagServiceImpl implements TagService<Tag> {
     }
 
     @Override
-    public Optional<Tag> findById(String id) {
-        Optional<Tag> tag;
+    public Tag findById(String id) {
         try {
-            tag = dao.findById(Long.parseLong(id));
+            return dao.findById(Long.parseLong(id));
         } catch (NumberFormatException e) {
-            tag = Optional.empty();
+            throw new RuntimeException("Invalid tag id (id = " + id + ")");
         }
-        return tag;
     }
 
     @Override
@@ -46,12 +44,10 @@ public class TagServiceImpl implements TagService<Tag> {
 
     @Override
     public boolean delete(String id) {
-        boolean result;
         try {
-            result = dao.delete(Long.parseLong(id)) == 1;
+            return dao.delete(Long.parseLong(id)) == 1;
         } catch (NumberFormatException e) {
-            result = false;
+            throw new RuntimeException("Invalid tag id (id = " + id + ")");
         }
-        return result;
     }
 }
