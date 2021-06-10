@@ -36,15 +36,16 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteTag(@PathVariable String id) {
-        return service.delete(id) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body("Tag deleted successfully" +
-                " (id = " + id + ")") : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Failed to delete tag" +
+    public ResponseEntity<String> deleteTag(@PathVariable String id) {
+        service.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Tag deleted successfully" +
                 " (id = " + id + ")");
     }
 
     @PostMapping("/new")
-    public ResponseEntity createTag(@RequestBody Tag tag) {
-        return service.insert(tag) ? ResponseEntity.status(HttpStatus.CREATED).body("Tag created" +
-                " successfully") : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to create tag");
+    public ResponseEntity<String> createTag(@RequestBody Tag tag) {
+        service.insert(tag);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Tag created" +
+                " successfully");
     }
 }

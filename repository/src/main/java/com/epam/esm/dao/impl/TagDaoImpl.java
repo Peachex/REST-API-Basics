@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class TagDaoImpl implements TagDao<Tag> {
@@ -22,15 +23,19 @@ public class TagDaoImpl implements TagDao<Tag> {
     }
 
     @Override
-    public int insert(Tag tag) {
-        return template.update(SqlTagQuery.SQL_INSERT_TAG, tag.getName());
+    public boolean insert(Tag tag) {
+        return template.update(SqlTagQuery.SQL_INSERT_TAG, tag.getName()) == 1;
     }
 
     @Override
-    public Tag findById(long id) {
+    public Optional<Tag> findById(long id) {
         return template.query(SqlTagQuery.SQL_SELECT_TAG_BY_ID, mapper, new Object[]{id}).stream()
-                .findAny()
-                .orElseThrow(() -> new RuntimeException("Requested resource not found (id = " + id + ")"));
+                .findAny();
+    }
+
+    @Override
+    public Optional<Tag> findByName(String name) {
+        return template.query(SqlTagQuery.SQL_SELECT_TAG_BY_NAME, mapper, new Object[]{name}).stream().findAny();
     }
 
     @Override
@@ -39,7 +44,7 @@ public class TagDaoImpl implements TagDao<Tag> {
     }
 
     @Override
-    public int delete(long id) {
-        return template.update(SqlTagQuery.SQL_DELETE_TAG_BY_ID, id);
+    public boolean delete(long id) {
+        return template.update(SqlTagQuery.SQL_DELETE_TAG_BY_ID, id) == 1;
     }
 }

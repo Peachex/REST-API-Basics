@@ -5,7 +5,7 @@ import com.epam.esm.dto.GiftCertificate;
 import java.util.List;
 
 public interface GiftCertificateDao<T extends GiftCertificate> {
-    boolean add(T t);
+    boolean insert(T t);
 
     List<T> findAll();
 }
