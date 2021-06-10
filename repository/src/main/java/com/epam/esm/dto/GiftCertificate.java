@@ -20,13 +20,18 @@ public class GiftCertificate {
     }
 
     public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate,
-                           LocalDateTime lastUpdateDate, List<Tag> tags) {
+                           LocalDateTime lastUpdateDate) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate,
+                           LocalDateTime lastUpdateDate, List<Tag> tags) {
+        this(name, description, price, duration, createDate, lastUpdateDate);
         this.tags = tags;
     }
 
