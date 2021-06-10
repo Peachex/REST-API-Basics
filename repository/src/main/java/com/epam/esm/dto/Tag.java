@@ -39,12 +39,12 @@ public class Tag {
             return false;
         }
         Tag tag = (Tag) o;
-        return (id == tag.id && name.equals(tag.name));
+        return name.equals(tag.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(name);
     }
 
     @Override
