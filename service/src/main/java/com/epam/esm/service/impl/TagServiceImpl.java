@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.exception.InvalidFieldException;
+import com.epam.esm.exception.ResourceDuplicateException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,10 @@ public class TagServiceImpl implements TagService<Tag> {
 
     @Override
     public boolean insert(Tag tag) {
-        return (isNameValid(tag.getName()) && dao.insert(tag));
+        if (!isNameValid(tag.getName()) || dao.findByName(tag.getName()).isPresent()) {
+            throw new ResourceDuplicateException("2", "Tag already exists (name = " + tag.getName() + ")");
+        }
+        return dao.insert(tag);
     }
 
     @Override
