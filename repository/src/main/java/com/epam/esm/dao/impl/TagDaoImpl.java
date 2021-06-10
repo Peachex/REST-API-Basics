@@ -36,7 +36,6 @@ public class TagDaoImpl implements TagDao<Tag> {
     @Override
     public Optional<Tag> findByName(String name) {
         return template.query(SqlTagQuery.SQL_SELECT_TAG_BY_NAME, mapper, new Object[]{name}).stream().findAny();
-
     }
 
     @Override
