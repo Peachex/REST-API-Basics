@@ -1,6 +1,6 @@
 package com.epam.esm.handler;
 
-import com.epam.esm.error.ErrorResponse;
+import com.epam.esm.exception.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
