@@ -22,8 +22,8 @@ public class TagDaoImpl implements TagDao<Tag> {
     }
 
     @Override
-    public int insert(Tag tag) {
-        return template.update(SqlTagQuery.SQL_INSERT_TAG, tag.getName());
+    public boolean insert(Tag tag) {
+        return template.update(SqlTagQuery.SQL_INSERT_TAG, tag.getName()) == 1;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class TagDaoImpl implements TagDao<Tag> {
     }
 
     @Override
-    public int delete(long id) {
-        return template.update(SqlTagQuery.SQL_DELETE_TAG_BY_ID, id);
+    public boolean delete(long id) {
+        return template.update(SqlTagQuery.SQL_DELETE_TAG_BY_ID, id) == 1;
     }
 }
