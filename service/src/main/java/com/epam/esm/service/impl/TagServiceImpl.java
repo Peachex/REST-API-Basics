@@ -24,7 +24,10 @@ public class TagServiceImpl implements TagService<Tag> {
 
     @Override
     public boolean insert(Tag tag) {
-        if (!isNameValid(tag.getName()) || dao.findByName(tag.getName()).isPresent()) {
+        if (!isNameValid(tag.getName())) {
+            throw new InvalidFieldException("2", "Invalid tag name (name = " + tag.getName() + ")");
+        }
+        if (dao.findByName(tag.getName()).isPresent()) {
             throw new ResourceDuplicateException("2", "Tag already exists (name = " + tag.getName() + ")");
         }
         return dao.insert(tag);
