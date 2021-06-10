@@ -1,13 +1,13 @@
-package com.epam.esm.error;
+package com.epam.esm.exception;
 
-public class ErrorResponse {
+public class ExceptionResponse {
     private String message;
     private String errorCode;
 
-    public ErrorResponse() {
+    public ExceptionResponse() {
     }
 
-    public ErrorResponse(String message, String errorCode) {
+    public ExceptionResponse(String message, String errorCode) {
         this.message = message;
         this.errorCode = errorCode;
     }
