@@ -1,13 +1,15 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.dto.GiftCertificate;
+import com.epam.esm.dto.Tag;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class GiftCertificateValidator {
-    private static final Pattern NAME_PATTERN = Pattern.compile("[a-zA-Zа-яА-Я]{1,256}");
-    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("[a-zA-Zа-яА-Я0-9]{1,5000}");
+    private static final Pattern NAME_PATTERN = Pattern.compile("[А-Яа-я\\w\\s\\p{Punct}]{1,256}");
+    private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("[А-Яа-я\\w\\s\\p{Punct}]{1,5000}");
 
     private GiftCertificateValidator() {
     }
@@ -15,7 +17,8 @@ public class GiftCertificateValidator {
     public static boolean isGiftCertificateCreationFormValid(GiftCertificate giftCertificate) {
         return (isNameValid(giftCertificate.getName()) && isDescriptionValid(giftCertificate.getDescription()) &&
                 isPriceValid(giftCertificate.getPrice()) && isDurationValid(giftCertificate.getDuration()) &&
-                giftCertificate.getCreateDate() == null && giftCertificate.getLastUpdateDate() == null);
+                giftCertificate.getCreateDate() == null && giftCertificate.getLastUpdateDate() == null &&
+                areGiftCertificateTagsValid(giftCertificate.getTags()));
     }
 
     public static boolean isNameValid(String name) {
@@ -32,5 +35,13 @@ public class GiftCertificateValidator {
 
     public static boolean isDurationValid(int duration) {
         return duration > 0;
+    }
+
+    public static boolean areGiftCertificateTagsValid(List<Tag> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return true;
+        }
+        return tags.stream()
+                .allMatch(t -> TagValidator.isNameValid(t.getName()));
     }
 }
