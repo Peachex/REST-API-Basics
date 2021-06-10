@@ -2,6 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.Tag;
+import com.epam.esm.exception.InvalidFieldException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +29,20 @@ public class TagServiceImpl implements TagService<Tag> {
     @Override
     public Tag findById(String id) {
         try {
-            return dao.findById(Long.parseLong(id));
+            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException("2", "Requested" +
+                    " resource not found (id = " + id + ")"));
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Invalid tag id (id = " + id + ")");
+            throw new InvalidFieldException("2", "Invalid tag id (id = " + id + ")");
+        }
+    }
+
+    @Override
+    public Tag findByName(String name) {
+        if (isNameValid(name)) {
+            return dao.findByName(name).orElseThrow(() -> new ResourceNotFoundException("2", "Requested" +
+                    " resource not found (name = " + name + ")"));
+        } else {
+            throw new InvalidFieldException("2", "Invalid tag name (name = " + name + ")");
         }
     }
 
@@ -43,7 +56,7 @@ public class TagServiceImpl implements TagService<Tag> {
         try {
             return dao.delete(Long.parseLong(id));
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Invalid tag id (id = " + id + ")");
+            throw new InvalidFieldException("2", "Invalid tag id (id = " + id + ")");
         }
     }
 }
