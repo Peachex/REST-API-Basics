@@ -21,7 +21,7 @@ public class TagServiceImpl implements TagService<Tag> {
 
     @Override
     public boolean insert(Tag tag) {
-        return (isNameValid(tag.getName()) && dao.insert(tag) == 1);
+        return (isNameValid(tag.getName()) && dao.insert(tag));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TagServiceImpl implements TagService<Tag> {
     @Override
     public boolean delete(String id) {
         try {
-            return dao.delete(Long.parseLong(id)) == 1;
+            return dao.delete(Long.parseLong(id));
         } catch (NumberFormatException e) {
             throw new RuntimeException("Invalid tag id (id = " + id + ")");
         }
