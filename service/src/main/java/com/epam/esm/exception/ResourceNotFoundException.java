@@ -1,21 +1,12 @@
 package com.epam.esm.exception;
 
-import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 public class ResourceNotFoundException extends RuntimeException {
-    private static final HttpStatus status = NOT_FOUND;
     private String errorCode;
     private String message;
 
     public ResourceNotFoundException(String errorCode, String message) {
-        this.errorCode = status.value() + errorCode;
+        this.errorCode = errorCode;
         this.message = message;
-    }
-
-    public static HttpStatus getStatus() {
-        return status;
     }
 
     public String getErrorCode() {
