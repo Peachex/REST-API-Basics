@@ -1,6 +1,12 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.constant.SqlGiftCertificateColumnName;
+import com.epam.esm.dao.constant.SqlTagColumnName;
+import com.epam.esm.dao.creator.criteria.Criteria;
+import com.epam.esm.dao.creator.criteria.search.FullMatchSearchCriteria;
+import com.epam.esm.dao.creator.criteria.search.PartMatchSearchCriteria;
+import com.epam.esm.dao.creator.criteria.sort.FieldSortCriteria;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.exception.InvalidFieldException;
@@ -13,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,6 +34,8 @@ import static com.epam.esm.validator.GiftCertificateValidator.isPriceValid;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> {
+    private static final String ASC_SORT_ORDERING = "ASC";
+    private static final String DESC_SORT_ORDERING = "DESC";
     private final GiftCertificateDao<GiftCertificate> dao;
     private final TagService<Tag> tagService;
 
@@ -108,43 +114,33 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     }
 
     @Override
-    public List<GiftCertificate> findCertificatesWithTags() {
-        return dao.findAll().stream()
-                .filter(g -> !g.getTags().isEmpty())
-                .collect(Collectors.toList());
+    public List<GiftCertificate> findAll() {
+        return dao.findAll();
     }
 
     @Override
     public List<GiftCertificate> findCertificatesWithTagsByCriteria(String tagName, String certificateName, String certificateDescription, String sortByName, String sortByDate) {
-        //todo fixme
-        List<GiftCertificate> certificates = findCertificatesWithTags();
-        List<GiftCertificate> certificatesByCriteria = new ArrayList<>();
-
+        List<Criteria> criteriaList = new ArrayList<>();
         if (TagValidator.isNameValid(tagName)) {
-            certificates.stream()
-                    .filter(c -> c.getTags().stream()
-                            .anyMatch(t -> t.getName().toUpperCase().contains(tagName.toUpperCase())))
-                    .forEach(certificatesByCriteria::add);
+            criteriaList.add(new FullMatchSearchCriteria(SqlTagColumnName.TAG_NAME, tagName));
         }
         if (isNameValid(certificateName)) {
-            certificates.stream()
-                    .filter(c -> c.getName().toUpperCase().contains(certificateName.toUpperCase()))
-                    .forEach(certificatesByCriteria::add);
+            criteriaList.add(new PartMatchSearchCriteria(SqlGiftCertificateColumnName.NAME, certificateName));
         }
         if (isDescriptionValid(certificateDescription)) {
-            certificates.stream()
-                    .filter(c -> c.getDescription().toUpperCase().contains(certificateDescription.toUpperCase()))
-                    .forEach(certificatesByCriteria::add);
+            criteriaList.add(new PartMatchSearchCriteria(SqlGiftCertificateColumnName.DESCRIPTION, certificateDescription));
         }
-        if (sortByName != null) {
-            certificates.sort(sortByName.equalsIgnoreCase("desc") ? Comparator.comparing(GiftCertificate::getName).reversed() :
-                    Comparator.comparing(GiftCertificate::getName));
+        if (sortByName != null && !sortByName.isEmpty()) {
+            String sortOrdering = sortByName.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
+                    : DESC_SORT_ORDERING;
+            criteriaList.add(new FieldSortCriteria(SqlGiftCertificateColumnName.NAME, sortOrdering));
         }
-        if (sortByDate != null) {
-            certificates.sort(sortByDate.equalsIgnoreCase("desc") ? Comparator.comparing(GiftCertificate::getCreateDate).reversed() :
-                    Comparator.comparing(GiftCertificate::getCreateDate));
+        if (sortByDate != null && !sortByDate.isEmpty()) {
+            String sortOrdering = sortByDate.equalsIgnoreCase(ASC_SORT_ORDERING) ? ASC_SORT_ORDERING
+                    : DESC_SORT_ORDERING;
+            criteriaList.add(new FieldSortCriteria(SqlGiftCertificateColumnName.CREATE_DATE, sortOrdering));
         }
-        return certificatesByCriteria.isEmpty() ? certificates : certificatesByCriteria;
+        return dao.findWithTags(criteriaList);
     }
 
     private boolean saveNewTags(GiftCertificate giftCertificate, List<Tag> existingTags) {
