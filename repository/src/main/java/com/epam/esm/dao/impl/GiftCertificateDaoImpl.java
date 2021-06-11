@@ -2,6 +2,8 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.constant.SqlGiftCertificateQuery;
+import com.epam.esm.dao.creator.SqlQueryCreator;
+import com.epam.esm.dao.creator.criteria.Criteria;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dao.mapper.GiftCertificateMapper;
 import com.epam.esm.dto.Tag;
@@ -20,17 +22,15 @@ import java.util.Optional;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificate> {
-    private static final String SQL_SELECT_ALL_GIFT_CERTIFICATES = "SELECT gift_certificate_id, certificate_name," +
-            " description, price, duration, create_date, last_update_date, tag_id, tag_name FROM gift_certificates" +
-            " LEFT JOIN gift_certificates_tags ON gift_certificate_id = gift_certificate_id_fk" +
-            " LEFT JOIN tags ON tag_id = tag_id_fk;";
     private final JdbcTemplate template;
     private final GiftCertificateMapper mapper;
+    private final SqlQueryCreator queryCreator;
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate template, GiftCertificateMapper mapper) {
+    public GiftCertificateDaoImpl(JdbcTemplate template, GiftCertificateMapper mapper, SqlQueryCreator queryCreator) {
         this.template = template;
         this.mapper = mapper;
+        this.queryCreator = queryCreator;
     }
 
     @Override
@@ -84,7 +84,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
 
     @Override
     public List<GiftCertificate> findAll() {
-        return template.query(SQL_SELECT_ALL_GIFT_CERTIFICATES, mapper);
+        return template.query(SqlGiftCertificateQuery.SQL_SELECT_ALL_CERTIFICATES, mapper);
+    }
+
+    @Override
+    public List<GiftCertificate> findWithTags(List<Criteria> criteriaList) {
+        return template.query(queryCreator.createQuery(criteriaList), mapper);
     }
 
     @Override
