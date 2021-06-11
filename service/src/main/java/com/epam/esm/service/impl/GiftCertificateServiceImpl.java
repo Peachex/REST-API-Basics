@@ -18,7 +18,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.epam.esm.validator.GiftCertificateValidator.areGiftCertificateTagsValid;
+import static com.epam.esm.validator.GiftCertificateValidator.isDescriptionValid;
+import static com.epam.esm.validator.GiftCertificateValidator.isDurationValid;
 import static com.epam.esm.validator.GiftCertificateValidator.isGiftCertificateCreationFormValid;
+import static com.epam.esm.validator.GiftCertificateValidator.isNameValid;
+import static com.epam.esm.validator.GiftCertificateValidator.isPriceValid;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> {
@@ -47,6 +52,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         }
     }
 
+    @Transactional
     @Override
     public boolean delete(String id) {
         try {
@@ -59,6 +65,29 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
                 return dao.delete(giftCertificate.getId());
             } else {
                 throw new ResourceNotFoundException("1", "Requested resource not found (id = " + id + ")");
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFieldException("1", "Invalid tag id (id = " + id + ")");
+        }
+    }
+
+    @Transactional
+    @Override
+    public boolean update(String id, GiftCertificate newGiftCertificate) {
+        try {
+            GiftCertificate oldGiftCertificate = dao.findById(Long.parseLong(id)).orElseThrow(() ->
+                    new ResourceNotFoundException("1", "Requested resource not found (id = " + id + ")"));
+            if (updateGiftCertificateFields(oldGiftCertificate, newGiftCertificate) &&
+                    saveNewTags(oldGiftCertificate, tagService.findAll())) {
+                oldGiftCertificate.setLastUpdateDate(LocalDateTime.now());
+                List<Tag> tagsConnectedToCertificate = tagService.findTagsConnectedToCertificate(id);
+                List<Tag> tagsNeedToBeConnected = oldGiftCertificate.getTags().stream()
+                        .filter(t -> !tagsConnectedToCertificate.contains(t))
+                        .collect(Collectors.toList());
+                dao.connectTags(tagsNeedToBeConnected, oldGiftCertificate.getId());
+                return dao.update(oldGiftCertificate);
+            } else {
+                throw new InvalidFieldException("1", "Invalid gift certificate: " + newGiftCertificate);
             }
         } catch (NumberFormatException e) {
             throw new InvalidFieldException("1", "Invalid tag id (id = " + id + ")");
@@ -86,5 +115,30 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         return giftCertificate.getTags().stream()
                 .filter(t -> !existingTags.contains(t))
                 .allMatch(tagService::insert);
+    }
+
+    private boolean updateGiftCertificateFields(GiftCertificate oldGiftCertificate, GiftCertificate newGiftCertificate) {
+        boolean result = false;
+        if (isNameValid(newGiftCertificate.getName())) {
+            oldGiftCertificate.setName(newGiftCertificate.getName());
+            result = true;
+        }
+        if (isDescriptionValid(newGiftCertificate.getDescription())) {
+            oldGiftCertificate.setDescription(newGiftCertificate.getDescription());
+            result = true;
+        }
+        if (isPriceValid(newGiftCertificate.getPrice())) {
+            oldGiftCertificate.setPrice(newGiftCertificate.getPrice());
+            result = true;
+        }
+        if (isDurationValid(newGiftCertificate.getDuration())) {
+            oldGiftCertificate.setDuration(newGiftCertificate.getDuration());
+            result = true;
+        }
+        if (areGiftCertificateTagsValid(newGiftCertificate.getTags())) {
+            oldGiftCertificate.setTags(newGiftCertificate.getTags());
+            result = true;
+        }
+        return result;
     }
 }

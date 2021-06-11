@@ -9,6 +9,8 @@ public interface GiftCertificateService<T extends GiftCertificate> {
 
     boolean delete(String id);
 
+    boolean update(String id, GiftCertificate giftCertificate);
+
     T findById(String id);
 
     List<GiftCertificate> findCertificatesWithTags();
