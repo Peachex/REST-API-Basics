@@ -14,6 +14,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -27,8 +28,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
     private final SqlQueryCreator queryCreator;
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate template, GiftCertificateMapper mapper, SqlQueryCreator queryCreator) {
-        this.template = template;
+    public GiftCertificateDaoImpl(DataSource dataSource, GiftCertificateMapper mapper, SqlQueryCreator queryCreator) {
+        this.template = new JdbcTemplate(dataSource);
         this.mapper = mapper;
         this.queryCreator = queryCreator;
     }
