@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificate> {
@@ -23,19 +24,19 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
             " LEFT JOIN gift_certificates_tags ON gift_certificate_id = gift_certificate_id_fk" +
             " LEFT JOIN tags ON tag_id = tag_id_fk;";
     private final JdbcTemplate template;
-    private final GiftCertificateMapper giftCertificateMapper;
+    private final GiftCertificateMapper mapper;
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate template, GiftCertificateMapper giftCertificateMapper) {
+    public GiftCertificateDaoImpl(JdbcTemplate template, GiftCertificateMapper mapper) {
         this.template = template;
-        this.giftCertificateMapper = giftCertificateMapper;
+        this.mapper = mapper;
     }
 
     @Override
     public boolean insert(GiftCertificate giftCertificate) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         boolean isQuerySuccess = template.update(con -> {
-            PreparedStatement ps = con.prepareStatement(SqlGiftCertificateQuery.INSERT_GIFT_CERTIFICATE,
+            PreparedStatement ps = con.prepareStatement(SqlGiftCertificateQuery.SQL_INSERT_CERTIFICATE,
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, giftCertificate.getName());
             ps.setString(2, giftCertificate.getDescription());
@@ -50,14 +51,35 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
     }
 
     @Override
+    public boolean delete(long id) {
+        return template.update(SqlGiftCertificateQuery.SQL_DELETE_CERTIFICATE_BY_ID, id) == 1;
+    }
+
+    @Override
+    public boolean disconnectAllTags(long id) {
+        return template.update(SqlGiftCertificateQuery.SQL_DELETE_TAGS_FROM_CERTIFICATE_BY_CERTIFICATE_ID, id) == 1;
+    }
+
+    @Override
+    public Optional<GiftCertificate> findById(long id) {
+        List<GiftCertificate> giftCertificates = template.query(SqlGiftCertificateQuery.SQL_SELECT_CERTIFICATE_BY_ID,
+                mapper, id);
+        Optional<GiftCertificate> giftCertificate = Optional.empty();
+        if (giftCertificates != null && !giftCertificates.isEmpty()) {
+            giftCertificate = Optional.of(giftCertificates.get(0));
+        }
+        return giftCertificate;
+    }
+
+    @Override
     public List<GiftCertificate> findAll() {
-        return template.query(SQL_SELECT_ALL_GIFT_CERTIFICATES, giftCertificateMapper);
+        return template.query(SQL_SELECT_ALL_GIFT_CERTIFICATES, mapper);
     }
 
     private boolean updateTag(GiftCertificate giftCertificate, KeyHolder keyHolder) {
         if (keyHolder.getKey() != null) {
             return giftCertificate.getTags().stream()
-                    .allMatch(t -> template.update(SqlGiftCertificateQuery.UPDATE_GIFT_CERTIFICATE_TAG,
+                    .allMatch(t -> template.update(SqlGiftCertificateQuery.SQL_UPDATE_CERTIFICATE_TAG,
                             keyHolder.getKey().longValue(), t.getId()) == 1);
         } else {
             throw new DaoException("1", "Generated key is null for gift certificate: " + giftCertificate);
