@@ -44,6 +44,11 @@ public class TagDaoImpl implements TagDao<Tag> {
     }
 
     @Override
+    public List<Tag> findTagsConnectedToCertificate(long id) {
+        return template.query(SqlTagQuery.SQL_SELECT_TAGS_CONNECTED_WITH_CERTIFICATE, mapper, id);
+    }
+
+    @Override
     public boolean delete(long id) {
         return template.update(SqlTagQuery.SQL_DELETE_TAG_BY_ID, id) == 1;
     }

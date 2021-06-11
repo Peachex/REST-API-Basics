@@ -14,5 +14,7 @@ public interface TagDao<T extends Tag> {
 
     List<T> findAll();
 
+    List<T> findTagsConnectedToCertificate(long id);
+
     boolean delete(long id);
 }

@@ -4,6 +4,7 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.constant.SqlGiftCertificateQuery;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dao.mapper.GiftCertificateMapper;
+import com.epam.esm.dto.Tag;
 import com.epam.esm.exception.DaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -45,9 +46,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
             ps.setTimestamp(5, Timestamp.valueOf(giftCertificate.getCreateDate()));
             return ps;
         }, keyHolder) == 1;
-        return (isQuerySuccess && giftCertificate.getTags() != null && !giftCertificate.getTags().isEmpty() ?
-                updateTag(giftCertificate, keyHolder) : isQuerySuccess);
-
+        if (isQuerySuccess && keyHolder.getKey() != null) {
+            return (giftCertificate.getTags() == null || giftCertificate.getTags().isEmpty() ||
+                    connectTags(giftCertificate.getTags(), keyHolder.getKey().longValue()));
+        } else {
+            throw new DaoException("1", "Generated key is null for gift certificate: " + giftCertificate);
+        }
     }
 
     @Override
@@ -58,6 +62,13 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
     @Override
     public boolean disconnectAllTags(long id) {
         return template.update(SqlGiftCertificateQuery.SQL_DELETE_TAGS_FROM_CERTIFICATE_BY_CERTIFICATE_ID, id) == 1;
+    }
+
+    @Override
+    public boolean update(GiftCertificate giftCertificate) {
+        return template.update(SqlGiftCertificateQuery.SQL_UPDATE_CERTIFICATE_BY_ID, giftCertificate.getName(),
+                giftCertificate.getDescription(), giftCertificate.getPrice(), giftCertificate.getDuration(),
+                giftCertificate.getLastUpdateDate(), giftCertificate.getId()) == 1;
     }
 
     @Override
@@ -76,13 +87,10 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao<GiftCertificat
         return template.query(SQL_SELECT_ALL_GIFT_CERTIFICATES, mapper);
     }
 
-    private boolean updateTag(GiftCertificate giftCertificate, KeyHolder keyHolder) {
-        if (keyHolder.getKey() != null) {
-            return giftCertificate.getTags().stream()
-                    .allMatch(t -> template.update(SqlGiftCertificateQuery.SQL_UPDATE_CERTIFICATE_TAG,
-                            keyHolder.getKey().longValue(), t.getId()) == 1);
-        } else {
-            throw new DaoException("1", "Generated key is null for gift certificate: " + giftCertificate);
-        }
+    @Override
+    public boolean connectTags(List<Tag> tags, long certificateId) {
+        return tags.stream()
+                .allMatch(t -> template.update(SqlGiftCertificateQuery.SQL_UPDATE_CERTIFICATE_TAG,
+                        certificateId, t.getId()) == 1);
     }
 }

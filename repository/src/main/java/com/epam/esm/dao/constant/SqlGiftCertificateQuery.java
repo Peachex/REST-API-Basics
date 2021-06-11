@@ -18,6 +18,9 @@ public class SqlGiftCertificateQuery {
     public static final String SQL_DELETE_CERTIFICATE_BY_ID = "DELETE FROM gift_certificates" +
             " WHERE gift_certificate_id = ?;";
 
+    public static final String SQL_UPDATE_CERTIFICATE_BY_ID = "UPDATE gift_certificates SET certificate_name = ?," +
+            " description = ?, price = ?, duration = ?, last_update_date = ? WHERE gift_certificate_id = ?;";
+
     private SqlGiftCertificateQuery() {
     }
 }

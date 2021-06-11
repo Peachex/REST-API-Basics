@@ -59,6 +59,15 @@ public class TagServiceImpl implements TagService<Tag> {
     }
 
     @Override
+    public List<Tag> findTagsConnectedToCertificate(String certificateId) {
+        try {
+            return dao.findTagsConnectedToCertificate(Long.parseLong(certificateId));
+        } catch (NumberFormatException e) {
+            throw new InvalidFieldException("2", "Invalid certificate id (id = " + certificateId + ")");
+        }
+    }
+
+    @Override
     public boolean delete(String id) {
         try {
             return dao.delete(Long.parseLong(id));

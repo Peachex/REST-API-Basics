@@ -13,5 +13,7 @@ public interface TagService<T extends Tag> {
 
     List<T> findAll();
 
+    List<T> findTagsConnectedToCertificate(String certificateId);
+
     boolean delete(String id);
 }
