@@ -13,5 +13,9 @@ public interface GiftCertificateService<T extends GiftCertificate> {
 
     T findById(String id);
 
-    List<GiftCertificate> findCertificatesWithTags();
+    List<GiftCertificate> findAll();
+
+    List<GiftCertificate> findCertificatesWithTagsByCriteria(String tagName, String certificateName,
+                                                             String certificateDescription, String sortByName,
+                                                             String sortByDate);
 }

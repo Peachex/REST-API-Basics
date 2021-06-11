@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,9 +27,19 @@ public class GiftCertificateController {
         this.service = service;
     }
 
+    @GetMapping("/all")
+    public List<GiftCertificate> findAllGiftCertificates() {
+        return service.findAll();
+    }
+
     @GetMapping
-    public List<GiftCertificate> findCertificatesWithTags() {
-        return service.findCertificatesWithTags();
+    public List<GiftCertificate> findCertificatesWithTags(@RequestParam(required = false) String tagName,
+                                                          @RequestParam(required = false) String certificateName,
+                                                          @RequestParam(required = false) String certificateDescription,
+                                                          @RequestParam(required = false) String sortByName,
+                                                          @RequestParam(required = false) String sortByDate) {
+        return service.findCertificatesWithTagsByCriteria(tagName, certificateName, certificateDescription, sortByName,
+                sortByDate);
     }
 
     @PostMapping("/new")
