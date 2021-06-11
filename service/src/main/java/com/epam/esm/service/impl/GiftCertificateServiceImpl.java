@@ -4,6 +4,7 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dto.GiftCertificate;
 import com.epam.esm.dto.Tag;
 import com.epam.esm.exception.InvalidFieldException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,34 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             return dao.insert(giftCertificate);
         } else {
             throw new InvalidFieldException("1", "Invalid gift certificate: " + giftCertificate);
+        }
+    }
+
+    @Override
+    public boolean delete(String id) {
+        try {
+            Optional<GiftCertificate> giftCertificateOptional = dao.findById(Long.parseLong(id));
+            if (giftCertificateOptional.isPresent()) {
+                GiftCertificate giftCertificate = giftCertificateOptional.get();
+                if (giftCertificate.getTags() != null && !giftCertificate.getTags().isEmpty()) {
+                    dao.disconnectAllTags(giftCertificate.getId());
+                }
+                return dao.delete(giftCertificate.getId());
+            } else {
+                throw new ResourceNotFoundException("1", "Requested resource not found (id = " + id + ")");
+            }
+        } catch (NumberFormatException e) {
+            throw new InvalidFieldException("1", "Invalid tag id (id = " + id + ")");
+        }
+    }
+
+    @Override
+    public GiftCertificate findById(String id) {
+        try {
+            return dao.findById(Long.parseLong(id)).orElseThrow(() -> new ResourceNotFoundException("1", "Requested" +
+                    " resource not found (id = " + id + ")"));
+        } catch (NumberFormatException e) {
+            throw new InvalidFieldException("1", "Invalid tag id (id = " + id + ")");
         }
     }
 
