@@ -18,7 +18,7 @@ public class GiftCertificateValidator {
         return (isNameValid(giftCertificate.getName()) && isDescriptionValid(giftCertificate.getDescription()) &&
                 isPriceValid(giftCertificate.getPrice()) && isDurationValid(giftCertificate.getDuration()) &&
                 giftCertificate.getCreateDate() == null && giftCertificate.getLastUpdateDate() == null &&
-                areGiftCertificateTagsValid(giftCertificate.getTags()));
+                areGiftCertificateTagsValidForCreation(giftCertificate.getTags()));
     }
 
     public static boolean isNameValid(String name) {
@@ -37,9 +37,17 @@ public class GiftCertificateValidator {
         return duration > 0;
     }
 
-    public static boolean areGiftCertificateTagsValid(List<Tag> tags) {
+    public static boolean areGiftCertificateTagsValidForCreation(List<Tag> tags) {
         if (tags == null || tags.isEmpty()) {
             return true;
+        }
+        return tags.stream()
+                .allMatch(t -> TagValidator.isNameValid(t.getName()));
+    }
+
+    public static boolean areGiftCertificateTagsValid(List<Tag> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return false;
         }
         return tags.stream()
                 .allMatch(t -> TagValidator.isNameValid(t.getName()));
