@@ -7,12 +7,15 @@ import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
+import com.epam.esm.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -80,11 +83,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
             if (updateGiftCertificateFields(oldGiftCertificate, newGiftCertificate) &&
                     saveNewTags(oldGiftCertificate, tagService.findAll())) {
                 oldGiftCertificate.setLastUpdateDate(LocalDateTime.now());
-                List<Tag> tagsConnectedToCertificate = tagService.findTagsConnectedToCertificate(id);
-                List<Tag> tagsNeedToBeConnected = oldGiftCertificate.getTags().stream()
-                        .filter(t -> !tagsConnectedToCertificate.contains(t))
+                List<Tag> connectedTags = tagService.findTagsConnectedToCertificate(id);
+                List<Tag> notConnectedTags = tagService.findAll().stream()
+                        .filter(t -> !connectedTags.contains(t) && oldGiftCertificate.getTags().contains(t))
                         .collect(Collectors.toList());
-                dao.connectTags(tagsNeedToBeConnected, oldGiftCertificate.getId());
+                dao.connectTags(notConnectedTags, oldGiftCertificate.getId());
                 return dao.update(oldGiftCertificate);
             } else {
                 throw new InvalidFieldException("1", "Invalid gift certificate: " + newGiftCertificate);
@@ -109,6 +112,39 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
         return dao.findAll().stream()
                 .filter(g -> !g.getTags().isEmpty())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GiftCertificate> findCertificatesWithTagsByCriteria(String tagName, String certificateName, String certificateDescription, String sortByName, String sortByDate) {
+        //todo fixme
+        List<GiftCertificate> certificates = findCertificatesWithTags();
+        List<GiftCertificate> certificatesByCriteria = new ArrayList<>();
+
+        if (TagValidator.isNameValid(tagName)) {
+            certificates.stream()
+                    .filter(c -> c.getTags().stream()
+                            .anyMatch(t -> t.getName().toUpperCase().contains(tagName.toUpperCase())))
+                    .forEach(certificatesByCriteria::add);
+        }
+        if (isNameValid(certificateName)) {
+            certificates.stream()
+                    .filter(c -> c.getName().toUpperCase().contains(certificateName.toUpperCase()))
+                    .forEach(certificatesByCriteria::add);
+        }
+        if (isDescriptionValid(certificateDescription)) {
+            certificates.stream()
+                    .filter(c -> c.getDescription().toUpperCase().contains(certificateDescription.toUpperCase()))
+                    .forEach(certificatesByCriteria::add);
+        }
+        if (sortByName != null) {
+            certificates.sort(sortByName.equalsIgnoreCase("desc") ? Comparator.comparing(GiftCertificate::getName).reversed() :
+                    Comparator.comparing(GiftCertificate::getName));
+        }
+        if (sortByDate != null) {
+            certificates.sort(sortByDate.equalsIgnoreCase("desc") ? Comparator.comparing(GiftCertificate::getCreateDate).reversed() :
+                    Comparator.comparing(GiftCertificate::getCreateDate));
+        }
+        return certificatesByCriteria.isEmpty() ? certificates : certificatesByCriteria;
     }
 
     private boolean saveNewTags(GiftCertificate giftCertificate, List<Tag> existingTags) {
