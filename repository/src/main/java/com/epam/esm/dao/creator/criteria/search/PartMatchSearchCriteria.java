@@ -1,5 +1,8 @@
 package com.epam.esm.dao.creator.criteria.search;
 
+/**
+ * The type Part match search criteria.
+ */
 public class PartMatchSearchCriteria extends SearchCriteria {
     private static final String PART_MATCH_SEARCH_STATEMENT = "LIKE";
     private static final String SPACE_SYMBOL = " ";
@@ -10,6 +13,12 @@ public class PartMatchSearchCriteria extends SearchCriteria {
     private static final String CLOSE_BRACKET = ")";
 
 
+    /**
+     * Instantiates a new Part match search criteria.
+     *
+     * @param columnName the column name
+     * @param value      the value
+     */
     public PartMatchSearchCriteria(String columnName, String value) {
         super(columnName, value);
     }

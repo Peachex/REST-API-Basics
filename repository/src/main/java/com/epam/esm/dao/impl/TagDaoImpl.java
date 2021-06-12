@@ -12,11 +12,20 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The type Tag dao.
+ */
 @Repository
 public class TagDaoImpl implements TagDao<Tag> {
     private final JdbcTemplate template;
     private final TagMapper mapper;
 
+    /**
+     * Instantiates a new Tag dao.
+     *
+     * @param dataSource the data source
+     * @param mapper     the mapper
+     */
     @Autowired
     public TagDaoImpl(DataSource dataSource, TagMapper mapper) {
         this.template = new JdbcTemplate(dataSource);
