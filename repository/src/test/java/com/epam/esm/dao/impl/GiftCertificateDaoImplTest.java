@@ -1,8 +1,11 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.config.DatabaseConfiguration;
+import com.epam.esm.config.DataSourceConfig;
 import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.constant.SqlTagColumnName;
 import com.epam.esm.dao.creator.SqlGiftCertificateQueryCreator;
+import com.epam.esm.dao.creator.criteria.Criteria;
+import com.epam.esm.dao.creator.criteria.search.FullMatchSearchCriteria;
 import com.epam.esm.dao.mapper.GiftCertificateMapper;
 import com.epam.esm.dto.GiftCertificate;
 import org.junit.jupiter.api.Test;
@@ -10,23 +13,23 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GiftCertificateDaoImplTest {
     private static final GiftCertificateDao<GiftCertificate> dao = new GiftCertificateDaoImpl
-            (new DatabaseConfiguration().embeddedDataSource(), new GiftCertificateMapper(),
-                    new SqlGiftCertificateQueryCreator());
+            (DataSourceConfig.dataSource, new GiftCertificateMapper(), new SqlGiftCertificateQueryCreator());
 
     @Test
-    public void insertTest() {
-        boolean actual = dao.insert(new GiftCertificate(6, "Test", "Test", new BigDecimal("1"), 2,
-                LocalDateTime.of(2021, 5, 5, 23, 42, 12, 112000000),
-                null, new ArrayList<>()));
-        assertTrue(actual);
+    public void findWithTagsTest() {
+        List<GiftCertificate> expected = new ArrayList<>();
+        List<Criteria> criteriaList = new ArrayList<>();
+        criteriaList.add(new FullMatchSearchCriteria(SqlTagColumnName.TAG_NAME, "#longverylongtagname"));
+        List<GiftCertificate> actual = dao.findWithTags(criteriaList);
+        assertEquals(expected, actual);
     }
 
     @Test
