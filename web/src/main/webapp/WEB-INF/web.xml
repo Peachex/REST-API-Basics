@@ -4,7 +4,12 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          id="WebApp_ID" version="3.1">
 
-    <display-name>spring-mvc-app1</display-name>
+    <display-name>spring-mvc-app</display-name>
+
+    <context-param>
+        <param-name>spring.profiles.active</param-name>
+        <param-value>dev</param-value>
+    </context-param>
 
     <absolute-ordering/>
 
@@ -22,5 +27,4 @@
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
 </web-app>

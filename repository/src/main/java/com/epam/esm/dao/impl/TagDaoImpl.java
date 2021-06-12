@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,8 +18,8 @@ public class TagDaoImpl implements TagDao<Tag> {
     private final TagMapper mapper;
 
     @Autowired
-    public TagDaoImpl(JdbcTemplate template, TagMapper mapper) {
-        this.template = template;
+    public TagDaoImpl(DataSource dataSource, TagMapper mapper) {
+        this.template = new JdbcTemplate(dataSource);
         this.mapper = mapper;
     }
 
