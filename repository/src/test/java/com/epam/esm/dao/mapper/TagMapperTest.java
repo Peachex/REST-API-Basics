@@ -1,13 +1,12 @@
 package com.epam.esm.dao.mapper;
 
-import com.epam.esm.config.DatabaseConfiguration;
+import com.epam.esm.config.DataSourceConfig;
 import com.epam.esm.dao.constant.SqlTagQuery;
 import com.epam.esm.dto.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,8 +15,6 @@ import java.util.List;
 
 
 public class TagMapperTest {
-    private final DataSource dataSource = new DatabaseConfiguration().embeddedDataSource();
-
     @Test
     public void mapRowTest() throws SQLException {
         List<Tag> expected = new ArrayList<>();
@@ -27,7 +24,7 @@ public class TagMapperTest {
         expected.add(new Tag("#cold"));
         expected.add(new Tag("#relax"));
 
-        Statement statement = dataSource.getConnection().createStatement();
+        Statement statement = DataSourceConfig.dataSource.getConnection().createStatement();
         ResultSet rs = statement.executeQuery(SqlTagQuery.SQL_SELECT_ALL_TAGS);
 
         List<Tag> actual = new ArrayList<>();

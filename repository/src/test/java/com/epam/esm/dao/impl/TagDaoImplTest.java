@@ -1,19 +1,20 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.config.DatabaseConfiguration;
+import com.epam.esm.config.DataSourceConfig;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.mapper.TagMapper;
 import com.epam.esm.dto.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TagDaoImplTest {
-    private static final TagDao<Tag> dao = new TagDaoImpl(new DatabaseConfiguration().embeddedDataSource(), new TagMapper());
+    private static final TagDao<Tag> dao = new TagDaoImpl(DataSourceConfig.dataSource, new TagMapper());
 
     @Test
     public void findByNameTest() {
@@ -30,9 +31,12 @@ public class TagDaoImplTest {
     }
 
     @Test
-    public void insertTest() {
-        boolean actual = dao.insert(new Tag("#new"));
-        assertTrue(actual);
+    public void findTagsConnectedToCertificateTest() {
+        List<Tag> actual = new ArrayList<>();
+        actual.add(new Tag(1, "#funny"));
+        actual.add(new Tag(2, "#cool"));
+        List<Tag> expected = dao.findTagsConnectedToCertificate(1);
+        assertEquals(expected, actual);
     }
 
     @Test
