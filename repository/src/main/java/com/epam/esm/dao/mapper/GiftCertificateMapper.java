@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Gift certificate mapper.
+ */
 @Component
 public class GiftCertificateMapper implements ResultSetExtractor<List<GiftCertificate>> {
     @Override

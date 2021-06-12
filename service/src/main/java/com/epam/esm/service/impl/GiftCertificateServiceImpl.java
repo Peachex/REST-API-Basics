@@ -32,6 +32,9 @@ import static com.epam.esm.validator.GiftCertificateValidator.isGiftCertificateC
 import static com.epam.esm.validator.GiftCertificateValidator.isNameValid;
 import static com.epam.esm.validator.GiftCertificateValidator.isPriceValid;
 
+/**
+ * The type Gift certificate service.
+ */
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCertificate> {
     private static final String ASC_SORT_ORDERING = "ASC";
@@ -39,6 +42,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService<GiftCe
     private final GiftCertificateDao<GiftCertificate> dao;
     private final TagService<Tag> tagService;
 
+    /**
+     * Instantiates a new Gift certificate service.
+     *
+     * @param dao        the dao
+     * @param tagService the tag service
+     */
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao<GiftCertificate> dao, TagService<Tag> tagService) {
         this.dao = dao;

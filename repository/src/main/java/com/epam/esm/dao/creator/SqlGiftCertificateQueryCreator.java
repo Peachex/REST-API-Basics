@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * The type Sql gift certificate query creator.
+ */
 @Component
 public class SqlGiftCertificateQueryCreator implements SqlQueryCreator {
     private static final String SELECT_QUERY_WITH_OUT_CRITERIA = "SELECT gift_certificate_id, certificate_name," +
