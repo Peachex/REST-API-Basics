@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GiftCertificateMapperTest {
-    private final DataSource dataSource = new DatabaseConfiguration().embeddedDataSource();
+    private static final DataSource dataSource = new DatabaseConfiguration().embeddedDataSource();
 
     @Test
     public void extractDataTest() throws SQLException {
@@ -30,7 +30,7 @@ public class GiftCertificateMapperTest {
                 .prepareStatement(SqlGiftCertificateQuery.SQL_SELECT_CERTIFICATE_BY_ID);
         preparedStatement.setLong(1, 2);
         ResultSet rs = preparedStatement.executeQuery();
-        
+
         List<GiftCertificate> actual = new GiftCertificateMapper().extractData(rs);
         assertEquals(expected, actual);
     }
