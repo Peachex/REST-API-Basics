@@ -22,7 +22,7 @@ public class GiftCertificateValidatorTest {
 
     @Test
     public void isPriceValidTest() {
-        boolean actual = GiftCertificateValidator.isPriceValid(new BigDecimal(""));
+        boolean actual = GiftCertificateValidator.isPriceValid(BigDecimal.valueOf(-12.24));
         assertFalse(actual);
     }
 }
