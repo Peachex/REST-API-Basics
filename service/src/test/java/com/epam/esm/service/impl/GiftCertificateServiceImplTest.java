@@ -1,4 +1,4 @@
 package com.epam.esm.service.impl;
 
-public class GiftCertificateServiceImpl {
+public class GiftCertificateServiceImplTest {
 }
